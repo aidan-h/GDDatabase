@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Game_Design_DB.Data;
 using Game_Design_DB.Models;
 using Game_Design_DB.ViewModels;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Game_Design_DB.Controllers
 {
@@ -34,7 +35,7 @@ namespace Game_Design_DB.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Game
+            var game = await _context.Game.Include(p => p.People)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (game == null)
             {
@@ -44,13 +45,28 @@ namespace Game_Design_DB.Controllers
             return View(game);
         }
 
+        private async Task PropagateViewModel(GameViewModel viewModel)
+        {
+            var allPeople = await _context.Person.ToListAsync();
+            viewModel.People = allPeople.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name }).ToList();
+        }
+
         // GET: Games/Create
         public async Task<IActionResult> Create()
         {
             var viewModel = new GameViewModel();
-            var allPeople = await _context.Person.ToListAsync();
-            viewModel.People = allPeople.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name }).ToList();
+            await PropagateViewModel(viewModel);
             return View(viewModel);
+        }
+
+        private async Task PropagateGameWithViewModel(Game game, GameViewModel viewModel)
+        {
+            //TODO Stupidly messy, but I don't want to write a constructor.
+            game.Name = viewModel.Name;
+            game.Website = viewModel.Website;
+            game.Developer = viewModel.Developer;
+            var peopleIDs = viewModel.PeopleIDs.Select(p => int.Parse(p));
+            game.People = await _context.Person.Where(p => peopleIDs.Contains(p.ID)).ToListAsync();
         }
 
         // POST: Games/Create
@@ -58,8 +74,11 @@ namespace Game_Design_DB.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Developer,Name,Website,ID")] Game game)
+        public async Task<IActionResult> Create([Bind("Developer,Name,Website,ID,PeopleIDs")] GameViewModel gameViewModel)
         {
+            var game = new Game();
+            await PropagateGameWithViewModel(game, gameViewModel);
+
             if (ModelState.IsValid)
             {
                 _context.Add(game);
@@ -77,12 +96,19 @@ namespace Game_Design_DB.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Game.FindAsync(id);
+            var game = await _context.Game.Include(g => g.People).FirstAsync(g => g.ID == id);
             if (game == null)
             {
                 return NotFound();
             }
-            return View(game);
+            //TODO also messy...
+            var viewModel = new GameViewModel();
+            await PropagateViewModel(viewModel);
+            viewModel.Developer = game.Developer;
+            viewModel.PeopleIDs = game.People.Select(p => p.ID.ToString());
+            viewModel.Website = game.Website;
+            viewModel.Name = game.Name;
+            return View(viewModel);
         }
 
         // POST: Games/Edit/5
@@ -90,9 +116,9 @@ namespace Game_Design_DB.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Developer,Name,Website,ID")] Game game)
+        public async Task<IActionResult> Edit(int id, [Bind("Developer,Name,Website,ID,PeopleIDs")] GameViewModel viewModel)
         {
-            if (id != game.ID)
+            if (id != viewModel.ID)
             {
                 return NotFound();
             }
@@ -101,12 +127,14 @@ namespace Game_Design_DB.Controllers
             {
                 try
                 {
+                    var game = _context.Game.Where(g => g.ID == viewModel.ID).FirstOrDefault();
+                    await PropagateGameWithViewModel(game, viewModel);
                     _context.Update(game);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GameExists(game.ID))
+                    if (!GameExists(viewModel.ID))
                     {
                         return NotFound();
                     }
@@ -117,7 +145,7 @@ namespace Game_Design_DB.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(game);
+            return View(viewModel);
         }
 
         // GET: Games/Delete/5

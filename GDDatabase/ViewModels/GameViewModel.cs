@@ -6,6 +6,7 @@ namespace Game_Design_DB.ViewModels
 {
     public class GameViewModel
     {
+        public int ID { get; set; }
         public String Developer { get; set; }
         public String Name { get; set; }
         [Url]
