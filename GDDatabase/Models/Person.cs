@@ -15,12 +15,9 @@ namespace Game_Design_DB.Models
             get; set;
         }
 
-        public List<Game> Games { get; } = new();
-        public List<Book> Books { get; } = new();
-        public List<Podcast> Podcasts { get; } = new();
-        public List<Article> Articles { get; } = new();
+        public ICollection<Game> Games { get; } = new List<Game>();
+        public ICollection<Resource> Resources { get; set; } = new List<Resource>();
 
-        [Url]
-        public string? Website { get; set; }
+        public ICollection<PersonalWebsite> Websites { get; set; } = new List<PersonalWebsite>();
     } 
 }

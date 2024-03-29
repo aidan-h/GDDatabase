@@ -10,8 +10,7 @@ namespace Game_Design_DB.Models
         public int ID { get; set; }
         [Url]
         public string? Website { get; set; }
-        [Required]
-        public Developer Developer { get; set; }
+        public Developer? Developer { get; set; } = null!;
 
     }
 }

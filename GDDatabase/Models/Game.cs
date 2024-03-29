@@ -12,6 +12,6 @@ namespace Game_Design_DB.Models
         public String? Website { get; set; }
         [Key]
         public int ID {  get; set; }
-        public List<Person> People { get; } = new();
+        public ICollection<Person> People { get; set;  } = new List<Person>();
     }
 }

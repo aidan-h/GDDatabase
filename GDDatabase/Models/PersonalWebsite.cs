@@ -2,16 +2,13 @@
 
 namespace Game_Design_DB.Models
 {
-    public class Video
+    public class PersonalWebsite
     {
         [Key]
         public int ID { get; set; }
-        [Required]
-        public string Title { get; set; }
-        public List<Person> Speakers { get; }
 
-        [Required]
         [Url]
         public string URL { get; set; }
+        public Person Person { get; set; }
     }
 }
