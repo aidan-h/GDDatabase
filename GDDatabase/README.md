@@ -25,3 +25,14 @@ RSS or Atom support.
 I plan to automate data collection and organization as much as possible through the use of
 crawlers and scrapers, specifically on game development blogs, social media, and distribution
 platforms.
+
+# TODO
+- Add Authors functionality
+- Clean code when it comes to ViewModel <> Model conversion and population (not propagation, wrong word)
+- Add Games and Resource Collection functionality to PeopleController
+- Add Authors and RelatedGames Collection functionality to ResourcesController
+- Add multiple websites functionality to PeopleController (expandable inputs with pure HTML/JS ??) or ditch it and go with a single website
+- Stylize everything with Bootstrap, darkmode maybe?
+- Deploy to Microsoft Azure with GitHub student pack offer
+- Write a blog post about the experience
+- Add authentication
