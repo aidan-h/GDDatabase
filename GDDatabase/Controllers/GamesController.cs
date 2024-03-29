@@ -54,7 +54,7 @@ namespace Game_Design_DB.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Website,ID")] Game game)
+        public async Task<IActionResult> Create([Bind("Developer,Name,Website,ID")] Game game)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace Game_Design_DB.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Website,ID")] Game game)
+        public async Task<IActionResult> Edit(int id, [Bind("Developer,Name,Website,ID")] Game game)
         {
             if (id != game.ID)
             {
