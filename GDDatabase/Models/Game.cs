@@ -5,7 +5,7 @@ namespace Game_Design_DB.Models
     public class Game
     {
         [Required]
-        public Developer Developer { get; set; }
+        public String Developer { get; set; }
         [Required]
         public String Name { get; set; }
         [Url]

@@ -15,6 +15,7 @@ namespace Game_Design_DB.Models
             get; set;
         }
 
+
         public ICollection<Game> Games { get; } = new List<Game>();
         public ICollection<Resource> Resources { get; set; } = new List<Resource>();
 

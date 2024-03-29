@@ -12,6 +12,7 @@ namespace Game_Design_DB.Models
         [Key]
         public int ID {  get; set; }
         public ICollection<Person> Authors { get; set; } = new List<Person>();
+        [Display(Name = "Related Games")]
         public ICollection<Game> RelatedGames { get; set; } = new List<Game>();
 
     }

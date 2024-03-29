@@ -16,8 +16,6 @@ namespace Game_Design_DB.Data
 
         public DbSet<Game_Design_DB.Models.Person> Person { get; set; } = default!;
         public DbSet<Game_Design_DB.Models.Game> Game { get; set; } = default!;
-        public DbSet<Game_Design_DB.Models.Developer> Developer { get; set; } = default!;
-        public DbSet<Game_Design_DB.Models.Engine> Engine { get; set; } = default!;
         public DbSet<Game_Design_DB.Models.Resource> Resource { get; set; } = default!;
         public DbSet<Game_Design_DB.Models.PersonalWebsite> PersonalWebsite { get; set; } = default!;
     }

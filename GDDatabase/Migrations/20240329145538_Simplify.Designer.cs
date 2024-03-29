@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Game_Design_DB.Migrations
 {
     [DbContext(typeof(Game_Design_DBContext))]
-    [Migration("20240329032414_PersonalWebsites")]
-    partial class PersonalWebsites
+    [Migration("20240329145538_Simplify")]
+    partial class Simplify
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,48 +40,6 @@ namespace Game_Design_DB.Migrations
                     b.ToTable("GamePerson");
                 });
 
-            modelBuilder.Entity("Game_Design_DB.Models.Developer", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Developer");
-                });
-
-            modelBuilder.Entity("Game_Design_DB.Models.Engine", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
-
-                    b.Property<int?>("DeveloperID")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Website")
-                        .HasColumnType("text");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("DeveloperID");
-
-                    b.ToTable("Engine");
-                });
-
             modelBuilder.Entity("Game_Design_DB.Models.Game", b =>
                 {
                     b.Property<int>("ID")
@@ -90,8 +48,9 @@ namespace Game_Design_DB.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("DeveloperID")
-                        .HasColumnType("integer");
+                    b.Property<string>("Developer")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -104,8 +63,6 @@ namespace Game_Design_DB.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("DeveloperID");
 
                     b.HasIndex("ResourceID");
 
@@ -120,16 +77,11 @@ namespace Game_Design_DB.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
 
-                    b.Property<int?>("DeveloperID")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("DeveloperID");
 
                     b.ToTable("Person");
                 });
@@ -207,35 +159,11 @@ namespace Game_Design_DB.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Game_Design_DB.Models.Engine", b =>
-                {
-                    b.HasOne("Game_Design_DB.Models.Developer", "Developer")
-                        .WithMany("Engines")
-                        .HasForeignKey("DeveloperID");
-
-                    b.Navigation("Developer");
-                });
-
             modelBuilder.Entity("Game_Design_DB.Models.Game", b =>
                 {
-                    b.HasOne("Game_Design_DB.Models.Developer", "Developer")
-                        .WithMany()
-                        .HasForeignKey("DeveloperID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Game_Design_DB.Models.Resource", null)
                         .WithMany("RelatedGames")
                         .HasForeignKey("ResourceID");
-
-                    b.Navigation("Developer");
-                });
-
-            modelBuilder.Entity("Game_Design_DB.Models.Person", b =>
-                {
-                    b.HasOne("Game_Design_DB.Models.Developer", null)
-                        .WithMany("People")
-                        .HasForeignKey("DeveloperID");
                 });
 
             modelBuilder.Entity("Game_Design_DB.Models.PersonalWebsite", b =>
@@ -262,13 +190,6 @@ namespace Game_Design_DB.Migrations
                         .HasForeignKey("ResourcesID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Game_Design_DB.Models.Developer", b =>
-                {
-                    b.Navigation("Engines");
-
-                    b.Navigation("People");
                 });
 
             modelBuilder.Entity("Game_Design_DB.Models.Person", b =>
