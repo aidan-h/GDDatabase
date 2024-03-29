@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Game_Design_DB.Data;
 using Game_Design_DB.Models;
+using Game_Design_DB.ViewModels;
 
 namespace Game_Design_DB.Controllers
 {
@@ -44,9 +45,12 @@ namespace Game_Design_DB.Controllers
         }
 
         // GET: Games/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var viewModel = new GameViewModel();
+            var allPeople = await _context.Person.ToListAsync();
+            viewModel.People = allPeople.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name }).ToList();
+            return View(viewModel);
         }
 
         // POST: Games/Create
