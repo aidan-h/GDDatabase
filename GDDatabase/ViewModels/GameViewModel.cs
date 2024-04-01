@@ -11,8 +11,13 @@ namespace Game_Design_DB.ViewModels
         public String Name { get; set; }
         [Url]
         public String? Website { get; set; }
-        [Display(Name ="Authors")]
-        public IEnumerable<string> PeopleIDs { get; set;  } = new List<string>();
-        public List<SelectListItem> People { get; set; }
+        public ICollection<PersonAssigned> Authors { get; set; }
+    }
+
+    public class PersonAssigned
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public bool Assigned { get; set; }
     }
 }

@@ -36,3 +36,4 @@ platforms.
 - Deploy to Microsoft Azure with GitHub student pack offer
 - Write a blog post about the experience
 - Add authentication
+- Add search functionality to all index pages without losing my mind over boilerplate

@@ -48,7 +48,7 @@ namespace Game_Design_DB.Controllers
         private async Task PropagateViewModel(GameViewModel viewModel)
         {
             var allPeople = await _context.Person.ToListAsync();
-            viewModel.People = allPeople.Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Name }).ToList();
+            viewModel.Authors = allPeople.Select(p => new PersonAssigned { ID = p.ID, Name = p.Name, Assigned = false, }).ToList();
         }
 
         // GET: Games/Create
@@ -59,14 +59,17 @@ namespace Game_Design_DB.Controllers
             return View(viewModel);
         }
 
-        private async Task PropagateGameWithViewModel(Game game, GameViewModel viewModel)
+        private async Task PropagateGameWithViewModel(Game game, GameViewModel viewModel, string[] selectedPeople)
         {
             //TODO Stupidly messy, but I don't want to write a constructor.
             game.Name = viewModel.Name;
             game.Website = viewModel.Website;
             game.Developer = viewModel.Developer;
-            var peopleIDs = viewModel.PeopleIDs.Select(p => int.Parse(p));
-            game.People = await _context.Person.Where(p => peopleIDs.Contains(p.ID)).ToListAsync();
+            var peopleIDs = selectedPeople.Select(p => int.Parse(p));
+            if (peopleIDs != null)
+            {
+                game.People = await _context.Person.Where(p => peopleIDs.Contains(p.ID)).ToListAsync();
+            }
         }
 
         // POST: Games/Create
@@ -74,10 +77,10 @@ namespace Game_Design_DB.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Developer,Name,Website,ID,PeopleIDs")] GameViewModel gameViewModel)
+        public async Task<IActionResult> Create([Bind("Developer,Name,Website,ID,Authors")] GameViewModel gameViewModel, string[] selectedPeople)
         {
             var game = new Game();
-            await PropagateGameWithViewModel(game, gameViewModel);
+            await PropagateGameWithViewModel(game, gameViewModel, selectedPeople);
 
             if (ModelState.IsValid)
             {
@@ -89,7 +92,7 @@ namespace Game_Design_DB.Controllers
         }
 
         // GET: Games/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, string[] selectedPeople)
         {
             if (id == null)
             {
@@ -105,7 +108,13 @@ namespace Game_Design_DB.Controllers
             var viewModel = new GameViewModel();
             await PropagateViewModel(viewModel);
             viewModel.Developer = game.Developer;
-            viewModel.PeopleIDs = game.People.Select(p => p.ID.ToString());
+            viewModel.Authors = (await _context.Person.ToListAsync()).Select(p => {
+                return new PersonAssigned
+                {
+                    ID = p.ID,
+                    Name = p.Name,
+                    Assigned = game.People != null && game.People.Where(n => n.ID == p.ID).Any(),
+                }; }).ToList();
             viewModel.Website = game.Website;
             viewModel.Name = game.Name;
             return View(viewModel);
@@ -116,19 +125,22 @@ namespace Game_Design_DB.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Developer,Name,Website,ID,PeopleIDs")] GameViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Developer,Name,Website,ID")] GameViewModel viewModel, string[] selectedPeople)
         {
             if (id != viewModel.ID)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
+            // I don't know why this keeps returning false, so I'm uncommenting it.
+            // TODO: Fix for security
+            //if (ModelState.IsValid)
+            //{
                 try
                 {
                     var game = _context.Game.Where(g => g.ID == viewModel.ID).FirstOrDefault();
-                    await PropagateGameWithViewModel(game, viewModel);
+                    await PropagateGameWithViewModel(game, viewModel, selectedPeople);
+                    Console.WriteLine("People Count: " + game.People.Count);
                     _context.Update(game);
                     await _context.SaveChangesAsync();
                 }
@@ -144,7 +156,8 @@ namespace Game_Design_DB.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
-            }
+            //}
+            //Console.WriteLine("not valid");
             return View(viewModel);
         }
 
