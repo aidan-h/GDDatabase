@@ -13,5 +13,6 @@ namespace Game_Design_DB.Models
         [Key]
         public int ID {  get; set; }
         public ICollection<Person> People { get; set;  } = new List<Person>();
+        public ICollection<Resource> Resources { get; set; } = new List<Resource>();
     }
 }

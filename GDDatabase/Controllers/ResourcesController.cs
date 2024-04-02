@@ -22,7 +22,7 @@ namespace Game_Design_DB.Controllers
         // GET: Resources
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Resource.Include(r => r.Authors).Include(r => r.RelatedGames).ToListAsync());
+            return View(await _context.Resource.Include(r => r.Authors).Include(r => r.Games).ToListAsync());
         }
 
         // GET: Resources/Details/5

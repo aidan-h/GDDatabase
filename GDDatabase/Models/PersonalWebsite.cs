@@ -9,6 +9,7 @@ namespace Game_Design_DB.Models
 
         [Url]
         public string URL { get; set; }
+        public int PersonID { get; set; }
         public Person Person { get; set; }
     }
 }
