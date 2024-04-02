@@ -138,11 +138,11 @@ namespace Game_Design_DB.Controllers
             //{
                 try
                 {
-                    var game = _context.Game.Where(g => g.ID == viewModel.ID).FirstOrDefault();
+                    var game = _context.Game.Include(g => g.People).Where(g => g.ID == viewModel.ID).FirstOrDefault();
                     await PropagateGameWithViewModel(game, viewModel, selectedPeople);
                     Console.WriteLine("People Count: " + game.People.Count);
                     _context.Update(game);
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
