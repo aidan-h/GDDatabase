@@ -12,51 +12,10 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Developer" class="control-label"></label>
-                <input asp-for="Developer" class="form-control" />
-                <span asp-validation-for="Developer" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Website" class="control-label"></label>
-                <input asp-for="Website" class="form-control" />
-                <span asp-validation-for="Website" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Authors" class="control-label"></label>
-                <div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
-        <table>
-            <tr>
-                @{
-                    int cnt = 0;
-
-                    foreach (var author in Model.Authors)
-                    {
-                        if (cnt++ % 3 == 0)
-                        {
-                            @:</tr><tr>
-                        }
-                        @:<td>
-                            <input type="checkbox"
-                                   name="selectedPeople"
-                                   value="@author.ID"
-                                   @(Html.Raw(author.Assigned ? "checked=\"checked\"" : "")) />
-                                   @author.Name
-                        @:</td>
-                    }
-                    @:</tr>
-                }
-        </table>
-    </div>
-</div>
-                <span asp-validation-for="Authors" class="text-danger"></span>
-            </div>
+            <form-field asp-for="Developer"></form-field>
+            <form-field asp-for="Name"></form-field>
+            <form-field asp-for="Website"></form-field>
+            <form-many-field asp-for="Authors" field="selectedPeople"></form-many-field>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
