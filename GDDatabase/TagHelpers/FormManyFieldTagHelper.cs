@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Game_Design_DB.TagHelpers
 {
-    [HtmlTargetElement("form-many-field")]
+    [HtmlTargetElement("form-many-field", TagStructure = TagStructure.NormalOrSelfClosing)]
     public class FormManyFieldTagHelper : TagHelper
     {
         [HtmlAttributeName("asp-for")]
@@ -31,19 +31,31 @@ namespace Game_Design_DB.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
+            output.TagMode = TagMode.StartTagAndEndTag;
             using (var writer = new StringWriter())
             {
                 writer.Write(@"<div class=""form-group""><div class=""col-md-offset-2 col-md-10"">");
+                var label = _generator.GenerateLabel(
+                    ViewContext,
+                    For.ModelExplorer,
+                    For.Name, null,
+                    new { @class = "control-label" });
 
-                var n = For.Model as ICollection<PersonAssigned>;
-                foreach (var author in n)
+                label.WriteTo(writer, NullHtmlEncoder.Default);
+
+                var n = For.Model as IEnumerable<Object>;
+                var index = 0;
+                foreach (var obj in n)
                 {
-                    writer.Write(@"<div><input type=""checkbox"" name=" + Field + @""" value=" + author.ID + @""" ");
+                    var author = (AssignedObject)obj;
+
+                    writer.Write("<div><input type=\"checkbox\" name=\"" + Field +"[" + index + "]" + "\" value=\"" + author.ID.ToString() + "\" ");
                     if (author.Assigned)
                     {
                         writer.Write(@"checked=""checked""");
                     }
-                    writer.Write(@"/> " + author.Name + @"</div>");
+                    writer.Write(@"/> " + author.DisplayName() + @"</div>");
+                    index++;
                 }
                 writer.Write(@"</div></div>");
                 output.Content.SetHtmlContent(writer.ToString());

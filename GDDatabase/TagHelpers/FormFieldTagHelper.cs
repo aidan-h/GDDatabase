@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Game_Design_DB.TagHelpers
 {
-        [HtmlTargetElement("form-field")]
+        [HtmlTargetElement("form-field", TagStructure = TagStructure.NormalOrSelfClosing)]
         public class FormFieldTagHelper : TagHelper
         {
             [HtmlAttributeName("asp-for")]
@@ -27,9 +27,11 @@ namespace Game_Design_DB.TagHelpers
 
             public override void Process(TagHelperContext context, TagHelperOutput output)
             {
+            output.TagMode = TagMode.StartTagAndEndTag;
                 using (var writer = new StringWriter())
                 {
                     writer.Write(@"<div class=""form-group"">");
+                    
 
                     var label = _generator.GenerateLabel(
                                     ViewContext,

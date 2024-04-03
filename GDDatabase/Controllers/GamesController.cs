@@ -59,17 +59,13 @@ namespace Game_Design_DB.Controllers
             return View(viewModel);
         }
 
-        private async Task PropagateGameWithViewModel(Game game, GameViewModel viewModel, string[] selectedPeople)
+        private async Task PropagateGameWithViewModel(Game game, GameViewModel viewModel)
         {
             //TODO Stupidly messy, but I don't want to write a constructor.
             game.Name = viewModel.Name;
             game.Website = viewModel.Website;
             game.Developer = viewModel.Developer;
-            var peopleIDs = selectedPeople.Select(p => int.Parse(p));
-            if (peopleIDs != null)
-            {
-                game.People = await _context.Person.Where(p => peopleIDs.Contains(p.ID)).ToListAsync();
-            }
+                game.People = await _context.Person.Where(p => viewModel.SelectedPeople.Contains(p.ID)).ToListAsync();
         }
 
         // POST: Games/Create
@@ -77,10 +73,10 @@ namespace Game_Design_DB.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Developer,Name,Website,ID,Authors")] GameViewModel gameViewModel, string[] selectedPeople)
+        public async Task<IActionResult> Create([Bind("Developer,Name,Website,ID,Authors,SelectedPeople")] GameViewModel gameViewModel)
         {
             var game = new Game();
-            await PropagateGameWithViewModel(game, gameViewModel, selectedPeople);
+            await PropagateGameWithViewModel(game, gameViewModel);
 
             if (ModelState.IsValid)
             {
@@ -125,7 +121,7 @@ namespace Game_Design_DB.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Developer,Name,Website,ID")] GameViewModel viewModel, string[] selectedPeople)
+        public async Task<IActionResult> Edit(int id, [Bind("Developer,Name,Website,ID,SelectedPeople")] GameViewModel viewModel)
         {
             if (id != viewModel.ID)
             {
@@ -139,7 +135,7 @@ namespace Game_Design_DB.Controllers
                 try
                 {
                     var game = _context.Game.Include(g => g.People).Where(g => g.ID == viewModel.ID).FirstOrDefault();
-                    await PropagateGameWithViewModel(game, viewModel, selectedPeople);
+                    await PropagateGameWithViewModel(game, viewModel);
                     Console.WriteLine("People Count: " + game.People.Count);
                     _context.Update(game);
                     _context.SaveChanges();

@@ -12,12 +12,19 @@ namespace Game_Design_DB.ViewModels
         [Url]
         public String? Website { get; set; }
         public ICollection<PersonAssigned> Authors { get; set; }
+        public IEnumerable<int> SelectedPeople { get; set; } = new List<int>();
     }
 
-    public class PersonAssigned
+    public abstract class AssignedObject
     {
         public int ID { get; set; }
-        public string Name { get; set; }
         public bool Assigned { get; set; }
+        public abstract string DisplayName();
+    }
+
+    public class PersonAssigned : AssignedObject
+    {
+        public string Name { get; set; }
+        public override string DisplayName() => Name;
     }
 }
