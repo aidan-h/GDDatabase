@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Game_Design_DB.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace Game_Design_DB.Models
 {
-    public class Game
+    public class Game : IAssignedObject<Game>
     {
+        public static Game Default() => new Game();
         [Required]
         public String Developer { get; set; }
         [Required]

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Game_Design_DB.Data;
 using Game_Design_DB.Models;
+using Game_Design_DB.ViewModels;
+using Game_Design_DB.Helpers;
 
 namespace Game_Design_DB.Controllers
 {
@@ -23,6 +25,16 @@ namespace Game_Design_DB.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Person.Include(p => p.Websites).Include(p => p.Resources).ToListAsync());
+        }
+
+        private async Task PropagatePersonWithViewModel(Person person, PersonViewModel viewModel)
+        {
+            //TODO Stupidly messy, but I don't want to write a constructor.
+            person.Name = viewModel.Name;
+            person.Websites = await _context.PersonalWebsite.Where(p => viewModel.Websites.Contains(p.ID)).ToListAsync();
+            person.Resources = await _context.Resource.Where(p => viewModel.Resources.Contains(p.ID)).ToListAsync();
+            person.Games = await _context.Game.Where(p => viewModel.Games.Contains(p.ID)).ToListAsync();
+
         }
 
         // GET: People/Details/5
@@ -43,19 +55,53 @@ namespace Game_Design_DB.Controllers
             return View(person);
         }
 
-        // GET: People/Create
-        public IActionResult Create()
+        private async Task PropagateViewModel(PersonViewModel viewModel)
         {
-            return View();
+            // TODO group tasks
+            var games = await _context.Game.ToListAsync();
+            var resources = await _context.Resource.ToListAsync();
+            var websites = await _context.PersonalWebsite.ToListAsync();
+
+            viewModel.Games = new AssignedSet { Objects = games.Select(p => new AssignedObject { ID = p.ID, Name = p.Name, Assigned = false, }).ToList() };
+            viewModel.Resources = new AssignedSet { Objects = resources.Select(p => new AssignedObject { ID = p.ID, Name = p.Title, Assigned = false, }).ToList() };
+            viewModel.Websites = new AssignedSet { Objects = websites.Select(p => new AssignedObject { ID = p.ID, Name = p.URL, Assigned = false, }).ToList() };
         }
+
+        // GET: People/Create
+        public async Task<IActionResult> Create()
+        {
+            var viewModel = new PersonViewModel();
+            await PropagateViewModel(viewModel);
+            return View(viewModel);
+        }
+
+        public async Task<Person?> FetchModel(int? id)
+        {
+            return await _context.Person.Include(p => p.Websites).Include(p => p.Resources).Include(p => p.Games).FirstAsync(p => p.ID == id);
+        }
+
+        public async Task<PersonViewModel?> FetchViewModel(int? id)
+        {
+            var model = await FetchModel(id);
+            if (model == null)
+            {
+                return null;
+            }
+
+            return await PersonViewModel.FromModel(model, _context);
+        }
+
 
         // POST: People/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,ID")] Person person)
+        public async Task<IActionResult> Create([Bind("Name,ID,SelectedGames,SelectedResources,SelectedWebsites")] PersonViewModel personViewModel)
         {
+            var person = new Person();
+            await PropagatePersonWithViewModel(person, personViewModel);
+
             if (ModelState.IsValid)
             {
                 _context.Add(person);

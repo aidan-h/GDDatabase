@@ -1,4 +1,5 @@
 ﻿using Game_Design_DB.ViewModels;
+using Game_Design_DB.Helpers;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
@@ -54,7 +55,7 @@ namespace Game_Design_DB.TagHelpers
                     {
                         writer.Write(@"checked=""checked""");
                     }
-                    writer.Write(@"/> " + author.DisplayName() + @"</div>");
+                    writer.Write(@"/> " + author.Name + @"</div>");
                     index++;
                 }
                 writer.Write(@"</div></div>");
