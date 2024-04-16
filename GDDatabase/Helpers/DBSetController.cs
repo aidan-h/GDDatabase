@@ -24,34 +24,29 @@ namespace Game_Design_DB.Helpers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
+                var model = await FetchModel(id);
+                if (model == null)
                 {
-                    var model = await FetchModel(id);
-                    if (model == null)
-                    {
-                        return NotFound();
-                    }
-                    await viewModel.PropagateModel(model, context);
-                    context.Update(model);
-                    context.SaveChanges();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ModelExists(viewModel.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                await viewModel.PropagateModel(model, context);
+                context.Update(model);
+                context.SaveChanges();
             }
-            return View(viewModel);
-
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ModelExists(viewModel.ID))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
         public async Task<IActionResult> ApplyCreate(V viewModel)
         {

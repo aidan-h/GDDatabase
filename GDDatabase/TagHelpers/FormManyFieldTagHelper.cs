@@ -44,18 +44,20 @@ namespace Game_Design_DB.TagHelpers
 
                 label.WriteTo(writer, NullHtmlEncoder.Default);
 
-                var n = For.Model as IEnumerable<Object>;
-                var index = 0;
-                foreach (var obj in n)
+                var n = For.Model as AssignedSet;
+                if (n == null)
                 {
-                    var author = (AssignedObject)obj;
-
-                    writer.Write("<div><input type=\"checkbox\" name=\"" + Field +"[" + index + "]" + "\" value=\"" + author.ID.ToString() + "\" ");
-                    if (author.Assigned)
+                    n = new AssignedSet();
+                }
+                var index = 0;
+                foreach (var obj in n.Objects)
+                {
+                    writer.Write("<div><input type=\"checkbox\" name=\"" + Field +"[" + index + "].Checked" + "\" value=\"true\"");
+                    if (obj.Assigned)
                     {
                         writer.Write(@"checked=""checked""");
                     }
-                    writer.Write(@"/> " + author.Name + @"</div>");
+                    writer.Write("/><input type=\"Hidden\" name=\"" + Field + "[" + index + "].ID\" value=\"" + obj.ID.ToString() + "\"/>" + obj.Name + @"</div>");
                     index++;
                 }
                 writer.Write(@"</div></div>");

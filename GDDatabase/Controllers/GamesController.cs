@@ -17,7 +17,10 @@ namespace Game_Design_DB.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Developer,Name,Website,ID,SelectedPeople")] GameViewModel viewModel, string[] selectedPeople) => await ApplyEdit(id, viewModel);
+        public async Task<IActionResult> Edit(int id, [Bind("Developer,Name,Website,ID,SelectedPeople")] GameViewModel viewModel, CheckBoxItem[] selectedPeople) {
+            await viewModel.FillWithQuery(selectedPeople, context);
+            return await ApplyEdit(id, viewModel);
+        }
 
         public override IQueryable<Game> IncludeDBSet() => dbSet.Include(g => g.People);
 
