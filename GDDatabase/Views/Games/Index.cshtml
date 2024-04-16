@@ -40,7 +40,11 @@
                 @Html.DisplayFor(modelItem => item.Website)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.People)
+                @foreach (var person in item.People)
+                {
+                    @Html.DisplayFor(model => person.Name)
+                    <br/>
+                } 
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

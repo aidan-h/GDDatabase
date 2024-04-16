@@ -37,10 +37,18 @@
                 @Html.DisplayFor(modelItem => item.URL)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Authors)
+                @foreach (var author in item.Authors)
+                {
+                    @Html.DisplayFor(modelItem => author.Name)
+                    <br/>
+                } 
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Games)
+                @foreach (var game in item.Games)
+                {
+                    @Html.DisplayFor(modelItem => game.Name)
+                    <br/>
+                } 
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

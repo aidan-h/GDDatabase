@@ -31,10 +31,18 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Websites)
+                @foreach (var website in item.Websites)
+                {
+                    @Html.DisplayFor(model => website.Name)
+                    <br/>
+                } 
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Resources)
+                @foreach (var resource in item.Resources)
+                {
+                    @Html.DisplayFor(model => resource.Name)
+                    <br/>
+                } 
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
