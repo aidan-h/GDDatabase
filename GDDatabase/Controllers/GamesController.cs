@@ -18,7 +18,7 @@ namespace Game_Design_DB.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Developer,Name,Website,ID,SelectedPeople")] GameViewModel viewModel, CheckBoxItem[] selectedPeople) {
-            await viewModel.FillWithQuery(selectedPeople, context);
+            viewModel.Authors = await AssignedSet.FromCheckBoxItems(context.Person, selectedPeople);
             return await ApplyEdit(id, viewModel);
         }
 
@@ -26,7 +26,10 @@ namespace Game_Design_DB.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Developer,Name,Website,ID,Authors,SelectedPeople")] GameViewModel gameViewModel) => await ApplyCreate(gameViewModel);
+        public async Task<IActionResult> Create([Bind("Developer,Name,Website,ID,Authors,SelectedPeople")] GameViewModel viewModel, CheckBoxItem[] selectedPeople) {
+            viewModel.Authors = await AssignedSet.FromCheckBoxItems(context.Person, selectedPeople);
+            return await ApplyCreate(viewModel);
+        }
 
         public async override Task<GameViewModel> PropogateViewModel(Game model) => new GameViewModel
         {

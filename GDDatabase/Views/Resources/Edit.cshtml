@@ -1,39 +1,21 @@
-﻿@model Game_Design_DB.Models.Resource
+﻿@model Game_Design_DB.ViewModels.ResourceViewModel
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<form-header subject="Resource" description="Edit @Model.Title" />
+<form class="col-md-4" asp-action="Edit">
+    <div asp-validation-summary="ModelOnly" class="text-danger" />
+    <form-field asp-for="Title" />
+    <form-field asp-for="URL" />
+    <form-many-field asp-for="Authors" field="SelectedPeople" />
+    <form-many-field asp-for="Games" field="SelectedGames" />
+    <input type="hidden" asp-for="ID" />
+    <submit />
+</form>
 
-<h4>Resource</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="URL" class="control-label"></label>
-                <input asp-for="URL" class="form-control" />
-                <span asp-validation-for="URL" class="text-danger"></span>
-            </div>
-            <input type="hidden" asp-for="ID" />
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+<a asp-action="Index">Back to List</a>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

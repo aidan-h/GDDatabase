@@ -1,33 +1,21 @@
-﻿@model Game_Design_DB.Models.Person
+﻿@model Game_Design_DB.ViewModels.PersonViewModel
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<form-header subject="Person" description="Add Person" />
+<form class="col-md-4" asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger" />
+    <form-field asp-for="Name" />
+    <form-many-field asp-for="Games" field="SelectedGames" />
+    <form-many-field asp-for="Resources" field="SelectedResources" />
+    <form-many-field asp-for="Websites" field="SelectedWebsites" />
+    <input type="hidden" asp-for="ID" />
+    <submit />
+</form>
 
-<h4>Person</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+<a asp-action="Index">Back to List</a>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

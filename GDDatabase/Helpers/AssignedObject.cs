@@ -37,14 +37,19 @@ namespace Game_Design_DB.Helpers
                 }).ToList()
             };
         }
-        public static async Task<AssignedSet> FetchIds<S>(DbSet<S> dbSet, IEnumerable<int>? selected = null) where S : class, IAssignedObject<S>
+
+        public static async Task<AssignedSet> FromCheckBoxItems<S>(DbSet<S> dbSet, CheckBoxItem[] boxes) where S : class, IAssignedObject<S>
         {
+            var ids = new List<int>();
+            foreach (var item in boxes)
+                if (item.Checked)
+                    ids.Add(item.ID);
             var items = await dbSet.ToListAsync();
             return new AssignedSet
             {
                 Objects = items.Select(p =>
                 {
-                    return new AssignedObject { Name = p.Name, ID = p.ID, Assigned = selected != null && selected.Where(n => n == p.ID).Any() };
+                    return new AssignedObject { Name = p.Name, ID = p.ID, Assigned = ids.Where(n => n == p.ID).Any() };
                 }).ToList()
             };
         }

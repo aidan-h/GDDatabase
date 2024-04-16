@@ -17,15 +17,6 @@ namespace Game_Design_DB.ViewModels
             model.People = await context.Person.Where(p => Ids.Contains(p.ID)).ToListAsync();
         }
 
-        public async Task FillWithQuery(CheckBoxItem[] selectedPeople, Game_Design_DBContext context)
-        {
-            var ids = new List<int>();
-            foreach (var item in selectedPeople)
-                if (item.Checked)
-                    ids.Add(item.ID);
-            Authors = await AssignedSet.FetchIds(context.Person, ids);
-        }
-
         public async static Task<GameViewModel> FromModel(Game_Design_DBContext context, Game model) => new GameViewModel
         {
             Developer = model.Developer,
